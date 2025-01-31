@@ -3,12 +3,51 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import { StarRating } from './components/StarRating';
+import { Avatar } from './components/Avatar';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
     <>
+      {/* Avatar Demo */}
+      <div className="mb-8 space-y-4">
+        <h2 className="text-xl font-bold">Avatar Demo</h2>
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Small</span>
+            <Avatar
+              src="https://i.pravatar.cc/150?u=1"
+              alt="John Doe"
+              size="sm"
+              fallback="John Doe"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Medium</span>
+            <Avatar
+              src="https://i.pravatar.cc/150?u=2"
+              alt="Jane Smith"
+              size="md"
+              fallback="Jane Smith"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Large</span>
+            <Avatar
+              src="https://i.pravatar.cc/150?u=3"
+              alt="Bob Johnson"
+              size="lg"
+              fallback="Bob Johnson"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Fallback</span>
+            <Avatar src="invalid-url" alt="Invalid Image" size="md" fallback="Test User" />
+          </div>
+        </div>
+      </div>
+
       {/* Star Rating Demo */}
       <div className="mb-8 space-y-4">
         <h2 className="text-xl font-bold">Star Rating Demo</h2>
