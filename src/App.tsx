@@ -6,13 +6,59 @@ import { StarRating } from './components/StarRating';
 import { Avatar } from './components/Avatar';
 import { SessionsButton } from './components/SessionsButton';
 import { SpeakerRow } from './components/SpeakersRow';
+import { SpeakersTable } from './components/SpeakersTable';
 
 function App() {
   const [count, setCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
+  const sampleSpeakers = [
+    {
+      name: 'Sarah Johnson',
+      image: 'https://i.pravatar.cc/150?u=sarah',
+      topics: ['AI/ML', 'Web Development'],
+      languages: ['English', 'Spanish'],
+      rating: 4,
+      socialLinks: {
+        twitter: 'https://twitter.com/sarah',
+        linkedin: 'https://linkedin.com/in/sarah',
+        instagram: 'https://instagram.com/sarah',
+      },
+    },
+    {
+      name: 'Michael Chen',
+      image: 'https://i.pravatar.cc/150?u=michael',
+      topics: ['Cloud Architecture', 'DevOps'],
+      languages: ['English', 'Mandarin'],
+      rating: 5,
+      socialLinks: {
+        twitter: 'https://twitter.com/michael',
+        linkedin: 'https://linkedin.com/in/michael',
+        github: 'https://github.com/michael',
+      },
+    },
+    {
+      name: 'Emma Davis',
+      image: 'https://i.pravatar.cc/150?u=emma',
+      topics: ['UX Design', 'Mobile Development'],
+      languages: ['English', 'French'],
+      rating: 5,
+      socialLinks: {
+        linkedin: 'https://linkedin.com/in/emma',
+        instagram: 'https://instagram.com/emma',
+        discord: 'https://discord.com/users/emma',
+      },
+    },
+  ];
+
   return (
     <>
+      {/* Speakers Table Demo */}
+      <div className="mb-8 space-y-4">
+        <h2 className="text-xl font-bold">Speakers Table Demo</h2>
+        <SpeakersTable speakers={sampleSpeakers} className="w-full" />
+      </div>
+
       {/* Speakers Row Demo */}
       <div className="mb-8 space-y-4">
         <h2 className="text-xl font-bold">Speakers Row Demo</h2>
