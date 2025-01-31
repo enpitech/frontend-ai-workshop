@@ -40,3 +40,30 @@
 .read-the-docs {
   color: #888;
 }
+
+@theme {
+  /* Primary Colors */
+  --color-mint-500: #8fb8c3;
+  --color-blue-500: #689fae;
+  --color-blue-100: #eefbff;
+  --color-blue-400: #33ccff;
+  --color-blue-600: #337fff;
+  --color-discord: #5865f2;
+
+  /* Background Colors */
+  --color-background-50: #f9f9f9;
+  --color-background-0: #ffffff;
+  --color-background-100: #f6f6f6;
+  --color-background-200: #f5f5f5;
+
+  /* Text Colors */
+  --color-text-900: #000000;
+  --color-text-600: #666666;
+  --color-text-400: #939393;
+  --color-text-200: #d9d9d9;
+
+  /* Status Colors */
+  --color-success-500: #10bc4c;
+  --color-success-100: #e7ffef;
+  --color-error-500: #ee1d52;
+}
