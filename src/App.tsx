@@ -12,18 +12,30 @@ function App() {
       {/* Star Rating Demo */}
       <div className="mb-8 space-y-4">
         <h2 className="text-xl font-bold">Star Rating Demo</h2>
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-start gap-4">
           <div className="flex items-center gap-4">
-            <span className="w-24 text-left">5/5 stars:</span>
+            <span className="w-24 text-left">Stars</span>
             <StarRating rating={5} />
           </div>
           <div className="flex items-center gap-4">
-            <span className="w-24 text-left">3/5 stars:</span>
+            <span className="w-24 text-left">Stars</span>
+            <StarRating rating={1} />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Stars</span>
+            <StarRating rating={2} />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Stars</span>
             <StarRating rating={3} />
           </div>
           <div className="flex items-center gap-4">
-            <span className="w-24 text-left">0/5 stars:</span>
-            <StarRating rating={0} />
+            <span className="w-24 text-left">Stars</span>
+            <StarRating rating={4} />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Stars</span>
+            <StarRating rating={5} />
           </div>
         </div>
       </div>
