@@ -49,6 +49,9 @@
   --color-blue-400: #33ccff;
   --color-blue-600: #337fff;
   --color-discord: #5865f2;
+  --color-primary: #4b48ec;
+  --color-primary-hover: #2522e7;
+  --color-primary-light: #f5f5ff;
 
   /* Background Colors */
   --color-background-50: #f9f9f9;

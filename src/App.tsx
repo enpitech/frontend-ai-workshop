@@ -4,12 +4,43 @@ import viteLogo from '/vite.svg';
 import './App.css';
 import { StarRating } from './components/StarRating';
 import { Avatar } from './components/Avatar';
+import { SessionsButton } from './components/SessionsButton';
 
 function App() {
   const [count, setCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   return (
     <>
+      {/* Sessions Button Demo */}
+      <div className="mb-8 space-y-4">
+        <h2 className="text-xl font-bold">Sessions Button Demo</h2>
+        <div className="flex flex-col items-start gap-4">
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Default</span>
+            <SessionsButton onClick={() => console.log('Sessions clicked')} />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Loading</span>
+            <SessionsButton isPending={true} />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Disabled</span>
+            <SessionsButton disabled />
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="w-24 text-left">Interactive</span>
+            <SessionsButton
+              isPending={isLoading}
+              onClick={() => {
+                setIsLoading(true);
+                setTimeout(() => setIsLoading(false), 2000);
+              }}
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Avatar Demo */}
       <div className="mb-8 space-y-4">
         <h2 className="text-xl font-bold">Avatar Demo</h2>
