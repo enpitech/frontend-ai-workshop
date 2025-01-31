@@ -5,6 +5,7 @@ import './App.css';
 import { StarRating } from './components/StarRating';
 import { Avatar } from './components/Avatar';
 import { SessionsButton } from './components/SessionsButton';
+import { SpeakerRow } from './components/SpeakersRow';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -12,6 +13,37 @@ function App() {
 
   return (
     <>
+      {/* Speakers Row Demo */}
+      <div className="mb-8 space-y-4">
+        <h2 className="text-xl font-bold">Speakers Row Demo</h2>
+        <div className="flex flex-col gap-2">
+          <SpeakerRow
+            name="Sarah Johnson"
+            image="https://i.pravatar.cc/150?u=sarah"
+            topics={['AI/ML', 'Web Development']}
+            languages={['English', 'Spanish']}
+            rating={4}
+            socialLinks={{
+              twitter: 'https://twitter.com/sarah',
+              linkedin: 'https://linkedin.com/in/sarah',
+              instagram: 'https://instagram.com/sarah',
+            }}
+          />
+          <SpeakerRow
+            name="Michael Chen"
+            image="https://i.pravatar.cc/150?u=michael"
+            topics={['Cloud Architecture', 'DevOps']}
+            languages={['English', 'Mandarin']}
+            rating={5}
+            socialLinks={{
+              twitter: 'https://twitter.com/michael',
+              linkedin: 'https://linkedin.com/in/michael',
+              tiktok: 'https://tiktok.com/@michael',
+            }}
+          />
+        </div>
+      </div>
+
       {/* Sessions Button Demo */}
       <div className="mb-8 space-y-4">
         <h2 className="text-xl font-bold">Sessions Button Demo</h2>

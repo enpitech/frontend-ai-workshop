@@ -5,9 +5,23 @@ interface StarRatingProps {
   rating: number;
   maxRating?: number;
   className?: string;
+  readonly?: boolean;
+  size?: 'sm' | 'md' | 'lg';
 }
 
-export function StarRating({ rating, maxRating = 5, className }: StarRatingProps) {
+export function StarRating({
+  rating,
+  maxRating = 5,
+  className,
+  readonly = false,
+  size = 'md',
+}: StarRatingProps) {
+  const sizeClasses = {
+    sm: 'h-4 w-4',
+    md: 'h-5 w-5',
+    lg: 'h-6 w-6',
+  };
+
   return (
     <div
       className={cn('flex gap-1', className)}
@@ -20,7 +34,7 @@ export function StarRating({ rating, maxRating = 5, className }: StarRatingProps
           <Star
             key={index}
             className={cn(
-              'h-6 w-6', // 24x24px
+              sizeClasses[size],
               'transition-colors',
               isFilled
                 ? 'fill-[var(--color-blue-500)] stroke-[var(--color-blue-500)]'
