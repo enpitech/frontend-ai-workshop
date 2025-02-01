@@ -1,0 +1,686 @@
+openapi: 3.0.3
+info:
+  title: Frontedistim Speakers Board API
+  description: REST API for managing speakers and registrations.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+    description: Main API server
+
+paths:
+  /speakers:
+    get:
+      summary: List all speakers
+      description: Retrieve a paginated list of speakers with optional filtering.
+      parameters:
+        - in: query
+          name: topics
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+          description: Comma-separated list of topics to filter (e.g., `React,Typescript`)
+        - in: query
+          name: languages
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: false
+          description: Comma-separated list of languages to filter (e.g., `English,Hebrew`)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakersListResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    post:
+      summary: Register a new speaker
+      description: Submit speaker registration with optional image upload.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  minLength: 2
+                image:
+                  type: string
+                  format: binary
+                  description: Speaker photo (PNG/JPG/JPEG, max 5MB)
+                topics:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                languages:
+                  type: array
+                  items:
+                    type: string
+                  minItems: 1
+                socialLinks:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      platform:
+                        type: string
+                      url:
+                        type: string
+                        format: uri
+                recordings:
+                  type: array
+                  items:
+                    type: string
+                    format: uri
+                rating:
+                  type: number
+                  minimum: 0
+                  maximum: 5
+              required:
+                - name
+                - image
+                - topics
+                - languages
+      responses:
+        '201':
+          description: Speaker created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakerCreationResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /speakers/{id}:
+    delete:
+      summary: Delete a speaker
+      description: Remove a speaker by ID (admin-only in future implementations).
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Speaker ID
+      responses:
+        '200':
+          description: Speaker deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteResponse'
+        '404':
+          description: Speaker not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /auth/signup:
+    post:
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  minLength: 8
+              required: [email, password]
+      responses:
+        '201':
+          description: User created
+
+  /auth/login:
+    post:
+      summary: Authenticate user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+              required: [email, password]
+      responses:
+        '200':
+          description: Returns JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /auth/logout:
+    post:
+      summary: Logout user
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successfully logged out
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LogoutResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /users/{userId}:
+    get:
+      summary: Get user profile
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /speakers/{id}/ratings:
+    post:
+      summary: Submit a rating for a speaker
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SpeakerID'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingRequest'
+      responses:
+        '201':
+          description: Rating submitted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+    get:
+      summary: Get all ratings for a speaker
+      parameters:
+        - $ref: '#/components/parameters/SpeakerID'
+      responses:
+        '200':
+          description: List of ratings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RatingsListResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalError'
+
+  /events:
+    post:
+      summary: Create a new event
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+                speakerIds:
+                  type: array
+                  items:
+                    type: string
+              required: [title, date]
+      responses:
+        '201':
+          description: Event created
+
+  /speakers/{id}/comments:
+    post:
+      summary: Post a comment
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SpeakerID'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                text:
+                  type: string
+                  maxLength: 500
+              required: [text]
+      responses:
+        '201':
+          description: Comment posted
+
+  /speakers/{id}/follow:
+    post:
+      summary: Follow a speaker
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SpeakerID'
+      responses:
+        '200':
+          description: Follow status updated
+
+  /events/{eventId}/speakers:
+    post:
+      summary: Assign speaker to event
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                speakerId:
+                  type: string
+              required: [speakerId]
+      responses:
+        '200':
+          description: Speaker added to event
+
+  /admin/speakers/pending:
+    get:
+      summary: List unapproved speakers
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakersListResponse'
+
+  /admin/speakers/{id}/approve:
+    post:
+      summary: Approve a speaker
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/SpeakerID'
+      responses:
+        '200':
+          description: Speaker approved
+
+  /admin/analytics:
+    get:
+      summary: Get platform statistics
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  totalSpeakers:
+                    type: integer
+                  totalUsers:
+                    type: integer
+                  avgRating:
+                    type: number
+
+  /export/speakers:
+    get:
+      summary: Export speakers list
+      parameters:
+        - in: query
+          name: format
+          schema:
+            type: string
+            enum: [csv, pdf]
+      responses:
+        '200':
+          content:
+            text/csv:
+              schema:
+                type: string
+            application/pdf:
+              schema:
+                type: string
+
+  /events/{eventId}/calendar:
+    get:
+      summary: Get iCal link for event
+      parameters:
+        - in: path
+          name: eventId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            text/calendar:
+              schema:
+                type: string
+
+  /speakers/search:
+    get:
+      summary: Advanced speaker search
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          description: Search by name, topic, or language
+        - in: query
+          name: topics
+          schema:
+            type: array
+            items:
+              type: string
+          description: Combine with AND/OR logic (e.g., `React AND Typescript`)
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeakersListResponse'
+
+components:
+  schemas:
+    Speaker:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 'abc123'
+        name:
+          type: string
+          example: 'Dana Harari'
+        imageUrl:
+          type: string
+          example: 'https://storage.com/speakers/abc123.jpg'
+        topics:
+          type: array
+          items:
+            type: string
+          example: ['React', 'Typescript']
+        languages:
+          type: array
+          items:
+            type: string
+          example: ['English', 'Hebrew']
+        socialLinks:
+          type: array
+          items:
+            type: object
+            properties:
+              platform:
+                type: string
+                example: 'Twitter'
+              url:
+                type: string
+                format: uri
+                example: 'https://twitter.com/dana'
+        recordings:
+          type: array
+          items:
+            type: string
+            format: uri
+          example: ['https://youtube.com/recording1']
+        rating:
+          type: number
+          example: 4.5
+
+    SpeakersListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Speaker'
+        meta:
+          type: object
+          properties:
+            total:
+              type: integer
+              example: 10
+
+    SpeakerCreationResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: 'abc123'
+            imageUrl:
+              type: string
+              example: 'https://storage.com/speakers/abc123.jpg'
+
+    DeleteResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            deletedId:
+              type: string
+              example: 'abc123'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              enum: [VALIDATION_ERROR, NOT_FOUND, INTERNAL_ERROR]
+              example: 'VALIDATION_ERROR'
+            message:
+              type: string
+              example: 'Missing required fields: name'
+            details:
+              type: array
+              items:
+                type: string
+              example: ['name']
+    Rating:
+      type: object
+      properties:
+        userId:
+          type: string
+        score:
+          type: number
+        comment:
+          type: string
+
+    UserResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            email:
+              type: string
+            savedSpeakers:
+              type: array
+              items:
+                $ref: '#/components/schemas/Speaker'
+
+    RatingRequest:
+      type: object
+      required: [score]
+      properties:
+        score:
+          type: number
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          maxLength: 1000
+
+    RatingResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Rating'
+
+    RatingsListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Rating'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+
+    PaginationMeta:
+      type: object
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        hasMore:
+          type: boolean
+
+    LogoutResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            message:
+              type: string
+              example: 'Successfully logged out'
+
+  parameters:
+    SpeakerID:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Unique speaker identifier
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Unauthorized:
+      description: Missing or invalid authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    Forbidden:
+      description: Insufficient permissions
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    InternalError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+# Future Enhancement Placeholders
+# x-future-features:
+#   - pagination: {page: 1, limit: 20}
+#   - search: "/speakers/search?query=React"
+#   - rate_limiting: 10/hour per IP
+#   - sorting: "sort=rating"
